@@ -7,11 +7,21 @@ fernet = Fernet(key)
 
 def decryptFilesFromDirectory(directory):
     for filename in os.listdir(directory):
-        decryption = fernet.decrypt(filename[:-4]).decode()
-        os.rename(
-            os.path.join(directory, filename), 
-            f"files/{decryption}"
-            )
-        print("decrypted file:", filename, "to:", decryption)
+        if filename == ".gitkeep":
+            continue
+        file_words = filename[:-4].split(" ")
+        decrypted_file_words = []
+        for word in file_words:
+            try:
+                decryption = fernet.decrypt(word).decode()
+                decrypted_file_words.append(decryption)
+            except:
+                decrypted_file_words.append(word)
 
-decryptFilesFromDirectory("./files")
+        decryption = " ".join(str(x) for x in decrypted_file_words)
+        os.rename(
+            os.path.join(directory, filename),
+            f"files/{decryption}.png"
+        )
+
+
